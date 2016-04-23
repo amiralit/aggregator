@@ -1,0 +1,57 @@
+#IDE Intellij
+*.ipr
+*.iws
+# pom upgrade #
+*.xml.bak
+# eclipse #
+.classpath
+.settings
+.project
+.metadata
+
+target
+*.log
+out
+*.bak
+
+lc-merged.properties
+lc-local.properties
+*.class
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# idea #
+.idea
+*.iml
+
+# JTA #
+*.epoch
+
+.DS_Store
+
+# activiti bpmn
+.xml
+sb-webapp/node_modules
+sb-webapp/src/main/webapp/styles/app.css
+sb-webapp/src/main/webapp/styles/snowflake-custom.css
+sb-webapp/src/main/webapp/styles/snowflake.css
+sb-webapp/src/main/webapp/scripts/config
+sb-webapp/src/main/webapp/scripts/mock/fillme.json
+git.properties
+
+#netbeans
+nbactions.xml
+
+sb-webapp/yo/snapshots
+
+sb-batch/overlays/
+
+bin
+
+#tomcat temp folder
+tomcat.8080
+
+# Misc files
+*rebel.xml
