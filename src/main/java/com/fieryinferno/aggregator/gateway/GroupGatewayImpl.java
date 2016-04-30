@@ -1,12 +1,15 @@
 package com.fieryinferno.aggregator.gateway;
 
-import com.fieryinferno.aggregator.gateway.commands.RestCommandFactory;
-import com.fieryinferno.aggregator.models.Table;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Created by atahmasebi on 4/23/16.
@@ -14,14 +17,24 @@ import java.util.Collections;
 @Component
 public class GroupGatewayImpl implements GroupGateway{
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroupGatewayImpl.class);
+
     @Autowired
-    private RestCommandFactory restCommandFactory;
+    private RestTemplate restTemplate;
 
     @Override
-    public Table getGroupInfo(int groupId) {
+    public Optional<JsonNode> getGroupStandings(final String groupId) {
 
-        final String url = "http://www.resultados-futbol.com/scripts/api/api.php?key=40b2f1fd2a56cbd88df8b2c9b291760f&req=tables&format=json&lang=en&league=177&group={groupId}&year=2015";
+        final String url = "http://www.resultados-futbol.com/scripts/api/api.php?key=40b2f1fd2a56cbd88df8b2c9b291760f&req=tables&format=json&lang=en&league=177&year=2015&group="+groupId;
 
-        return restCommandFactory.<Table>getDefaultGetCommand(url, Collections.singletonMap("groupId", "2"), new ParameterizedTypeReference<Table>() {}).execute();
+        final String response = restTemplate.getForObject(url, String.class);
+
+        try {
+            return Optional.ofNullable(new ObjectMapper().readTree(response));
+        } catch (IOException e) {
+            LOGGER.error("Error getting group standing for group: " + groupId, e);
+        }
+
+        return Optional.empty();
     }
 }

@@ -1,6 +1,7 @@
 package com.fieryinferno.aggregator.repositories;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.data.annotation.Id;
 
 /**
@@ -19,7 +20,7 @@ public class Match {
 
     private String matchId;
 
-    private DateTime startDate;
+    private LocalDateTime startDate;
 
     private MatchStatus matchStatus;
 
@@ -31,11 +32,11 @@ public class Match {
         this.matchStatus = matchStatus;
     }
 
-    public DateTime getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(DateTime startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 

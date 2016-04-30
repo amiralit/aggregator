@@ -6,6 +6,7 @@ import com.fieryinferno.aggregator.models.Table;
 import com.mongodb.Mongo;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class MyTest {
     @Test
     public void test(){
         DateTime dateTime = DateTime.parse("2016-04-25 5:00:00", FORMATTER);
-        DateTime now = DateTime.now().withZone(DateTimeZone.forID("America/New_York"));
+        DateTime now = DateTime.now().withZone(DateTimeZone.forID("Europe/Madrid"));
 
         if (dateTime.isAfter(now)){
             System.out.println("after now");
@@ -34,7 +35,19 @@ public class MyTest {
     }
 
     @Test
-    public void test1(){
+    public void test1() {
+
+        final LocalDateTime now = LocalDateTime.parse("2016-04-26 20:45:00", FORMATTER);
+        final DateTime dateTime = new DateTime(now.toString(), DateTimeZone.forID("Europe/Madrid"));
+        final DateTime dateTime1 =  new DateTime(dateTime).withZone(DateTimeZone.forID("America/Los_Angeles"));
+
+        System.out.println(dateTime1.toLocalDateTime());
+    }
+
+    @Test
+    public void test2(){
         System.out.println(DateTimeZone.getAvailableIDs());
     }
+
+
 }

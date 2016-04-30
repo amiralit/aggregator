@@ -3,20 +3,22 @@ package com.fieryinferno.aggregator.events;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by atahmasebi on 4/23/16.
  */
 public class PublisherImpl implements Publisher {
 
-    private final Map<EventTypes,List<Observer>> observers;
+    private final Map<EventTypes,Set<Observer>> observers;
 
     public PublisherImpl(){
         observers = new HashMap<>();
         Arrays.stream(EventTypes.values()).forEach(e -> {
-            observers.put(e, new ArrayList<>());
+            observers.put(e, new HashSet<>());
         });
     }
 

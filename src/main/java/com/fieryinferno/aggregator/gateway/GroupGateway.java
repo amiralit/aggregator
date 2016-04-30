@@ -1,10 +1,12 @@
 package com.fieryinferno.aggregator.gateway;
 
-import com.fieryinferno.aggregator.models.Table;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import java.util.Optional;
 
 /**
  * Created by atahmasebi on 4/23/16.
  */
 public interface GroupGateway {
-    Table getGroupInfo(final int groupId);
+    Optional<JsonNode> getGroupStandings(final String groupId);
 }

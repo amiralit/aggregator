@@ -26,8 +26,18 @@ public class ScheduledTasks {
     @Autowired
     private MatchManager matchManager;
 
+////    @Autowired
+////    private MatchService matchService;
+//
+//    @Autowired
+//    private MatchRepository matchRepository;
+
     @Scheduled(fixedDelay = 60000)
     public void run() {
         matchManager.run();
+
+////        matchService.getMatches();
+//
+//        LOGGER.info(matchRepository.findByMatchId("347342").toString());
     }
 }

@@ -48,6 +48,8 @@ public class LiveMatchUpdater extends HystrixCommand<Void>{
             public void run() {
                 JsonNode matchDetails = getMatchDetails(matchId);
                 Integer status = matchDetails.get("status").asInt();
+
+                matchService.uploadMatchDetails(matchId, matchDetails);
                 LOGGER.info(matchDetails.toString());
                 LOGGER.info("-------------------------------------");
 

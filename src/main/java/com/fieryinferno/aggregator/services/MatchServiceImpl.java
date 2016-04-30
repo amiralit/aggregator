@@ -7,6 +7,7 @@ import com.fieryinferno.aggregator.repositories.Match;
 import com.fieryinferno.aggregator.repositories.MatchRepository;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
@@ -45,8 +46,13 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public List<Match> getCurrentMatches() {
         List<Match> matches = matchRepository.findByMatchStatus(Match.MatchStatus.NOT_STARTED);
-        DateTime now = DateTime.now().withZone(DateTimeZone.forID("America/New_York"));
-        return matches.stream().filter(match ->  match.getStartDate().isBefore(now)).collect(Collectors.toList());
+        LocalDateTime now = LocalDateTime.now().plusMinutes(30);
+
+        return matches.stream().filter(match ->  {
+            LOGGER.info("match startTime={}", match.getStartDate());
+            LOGGER.info("now={}", now);
+            return match.getStartDate().isBefore(now);
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -54,6 +60,7 @@ public class MatchServiceImpl implements MatchService {
         this.getMatches(1);
         this.getMatches(2);
         this.getMatches(3);
+        this.getMatches(4);
     }
 
     @Override
@@ -83,7 +90,7 @@ public class MatchServiceImpl implements MatchService {
                 if (mongoMatch == null){
                     final Match matchToInsert = new Match();
                     matchToInsert.setMatchId(matchId);
-                    matchToInsert.setStartDate(DateTime.parse(match.get("schedule").asText(), FORMATTER));
+                    matchToInsert.setStartDate(getLocalDateTime(match.get("schedule").asText()));
                     matchToInsert.setMatchStatus(Match.MatchStatus.NOT_STARTED);
                     LOGGER.info("Inserting match: {}", matchToInsert);
                     matchRepository.insert(matchToInsert);
@@ -92,6 +99,13 @@ public class MatchServiceImpl implements MatchService {
                 }
             }
         });
+    }
+
+    private LocalDateTime getLocalDateTime(final String dateStr){
+        final LocalDateTime now = LocalDateTime.parse(dateStr, FORMATTER);
+        final DateTime dateTime = new DateTime(now.toString(), DateTimeZone.forID("Europe/Madrid"));
+        final DateTime dateTime1 =  new DateTime(dateTime).withZone(DateTimeZone.forID("America/Los_Angeles"));
+        return dateTime1.toLocalDateTime();
     }
 
     private void updateFirebase(final String matchId){

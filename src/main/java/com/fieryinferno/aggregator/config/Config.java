@@ -1,5 +1,9 @@
 package com.fieryinferno.aggregator.config;
 
+import com.fieryinferno.aggregator.GroupManager;
+import com.fieryinferno.aggregator.GroupManagerImpl;
+import com.fieryinferno.aggregator.MatchManager;
+import com.fieryinferno.aggregator.MatchManagerImpl;
 import com.fieryinferno.aggregator.events.Event;
 import com.fieryinferno.aggregator.events.EventTypes;
 import com.fieryinferno.aggregator.events.Observer;
@@ -50,6 +54,16 @@ public class Config {
     }
 
     @Bean
+    public GroupManager groupManager(){
+        return new GroupManagerImpl();
+    }
+
+    @Bean
+    public MatchManager matchManager(){
+        return new MatchManagerImpl();
+    }
+
+    @Bean
     Publisher publisher(){
         Publisher publisher = new PublisherImpl();
         publisher.addObserver(EventTypes.MATCH_STARTED, new Observer() {
@@ -65,6 +79,9 @@ public class Config {
                 LOGGER.info("{} - {}", EventTypes.MATCH_ENDED, event.getMatchId());
             }
         });
+
+        publisher.addObserver(EventTypes.MATCH_ENDED, (GroupManagerImpl)groupManager());
+        publisher.addObserver(EventTypes.MATCH_ENDED, (MatchManagerImpl)matchManager());
 
         return publisher;
     }

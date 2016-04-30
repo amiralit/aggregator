@@ -20,8 +20,7 @@ import java.util.Optional;
 /**
  * Created by atahmasebi on 4/25/16.
  */
-@Component
-public class MatchManagerImpl implements MatchManager{
+public class MatchManagerImpl implements MatchManager, Observer{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MatchManagerImpl.class);
 
@@ -35,22 +34,26 @@ public class MatchManagerImpl implements MatchManager{
     public void run() {
         final List<Match> currentMatches = matchService.getCurrentMatches();
 
+        LOGGER.info("currentMatches={}", currentMatches);
+
         currentMatches.stream().forEach(currentMatch -> {
             final Optional<JsonNode> matchDetails = matchService.getMatchDetails(currentMatch.getMatchId());
 
             matchDetails.ifPresent(m -> {
-                final int status = m.get("status").asInt();
-                if(status != -1 && status != 1){
-                    currentMatch.setMatchStatus(Match.MatchStatus.IN_PROGRESS);
-                    matchService.updateMatch(currentMatch);
+                currentMatch.setMatchStatus(Match.MatchStatus.IN_PROGRESS);
+                matchService.updateMatch(currentMatch);
 
-                    new LiveMatchUpdater(matchService, publisher, currentMatch.getMatchId(), 10000).queue();
+                new LiveMatchUpdater(matchService, publisher, currentMatch.getMatchId(), 60000).queue();
 
-                    publisher.publish(new Event(EventTypes.MATCH_STARTED, currentMatch.getMatchId()));
-                } else {
-                    LOGGER.warn("match {} has not started yet", currentMatch.getMatchId());
-                }
+                publisher.publish(new Event(EventTypes.MATCH_STARTED, currentMatch.getMatchId()));
             });
         });
+    }
+
+    @Override
+    public void notify(Event event) {
+        if (event.getEventType() == EventTypes.MATCH_ENDED){
+            matchService.getMatches();
+        }
     }
 }
