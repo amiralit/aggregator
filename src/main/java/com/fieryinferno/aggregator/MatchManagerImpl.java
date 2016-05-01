@@ -52,8 +52,8 @@ public class MatchManagerImpl implements MatchManager, Observer{
 
     @Override
     public void notify(Event event) {
-        if (event.getEventType() == EventTypes.MATCH_ENDED){
-            matchService.getMatches();
-        }
+//        if (event.getEventType() == EventTypes.MATCH_ENDED){
+//            matchService.getMatches();
+//        }
     }
 }

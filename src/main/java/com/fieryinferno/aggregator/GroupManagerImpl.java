@@ -45,9 +45,9 @@ public class GroupManagerImpl implements GroupManager, Observer{
 
     @Override
     public void notify(Event event) {
-        if (event.getEventType() == EventTypes.MATCH_ENDED){
-            LOGGER.info("match ended - {}", event.getMatchId());
-            updateGroupStandings();
-        }
+//        if (event.getEventType() == EventTypes.MATCH_ENDED){
+//            LOGGER.info("match ended - {}", event.getMatchId());
+//            updateGroupStandings();
+//        }
     }
 }
