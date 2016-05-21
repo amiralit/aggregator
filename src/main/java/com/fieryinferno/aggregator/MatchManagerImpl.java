@@ -43,7 +43,7 @@ public class MatchManagerImpl implements MatchManager, Observer{
                 currentMatch.setMatchStatus(Match.MatchStatus.IN_PROGRESS);
                 matchService.updateMatch(currentMatch);
 
-                new LiveMatchUpdater(matchService, publisher, currentMatch.getMatchId(), 60000).queue();
+                new LiveMatchUpdater(matchService, publisher, currentMatch, 60000).queue();
 
                 publisher.publish(new Event(EventTypes.MATCH_STARTED, currentMatch.getMatchId()));
             });
