@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,6 +36,11 @@ public class MatchServiceImpl implements MatchService {
 
     @Autowired
     private FirebaseGateway firebaseGateway;
+
+    @PostConstruct
+    public void init(){
+        getMatches();
+    }
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
