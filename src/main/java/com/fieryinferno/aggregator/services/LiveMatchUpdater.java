@@ -4,12 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fieryinferno.aggregator.events.Event;
 import com.fieryinferno.aggregator.events.EventTypes;
 import com.fieryinferno.aggregator.events.Publisher;
-import com.fieryinferno.aggregator.gateway.MatchGateway;
 import com.fieryinferno.aggregator.gateway.commands.RestGetCommand;
 import com.fieryinferno.aggregator.repositories.Match;
-import com.fieryinferno.aggregator.repositories.MatchRepository;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,15 +24,15 @@ public class LiveMatchUpdater extends HystrixCommand<Void>{
     private static final Logger LOGGER = LoggerFactory.getLogger(LiveMatchUpdater.class);
 
     final private MatchService matchService;
-    final private String matchId;
+    final Match match;
     final long pullRate;
     final Publisher publisher;
 
-    public LiveMatchUpdater(final MatchService matchService, final Publisher publisher, final String matchId, final long pullRate) {
+    public LiveMatchUpdater(final MatchService matchService, final Publisher publisher, final Match match, final long pullRate) {
         super(HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(RestGetCommand.class.getSimpleName())));
 
         this.matchService = matchService;
-        this.matchId = matchId;
+        this.match = match;
         this.pullRate = pullRate;
         this.publisher = publisher;
     }
@@ -46,14 +45,14 @@ public class LiveMatchUpdater extends HystrixCommand<Void>{
             int i = 0;
             @Override
             public void run() {
-                JsonNode matchDetails = getMatchDetails(matchId);
+                JsonNode matchDetails = getMatchDetails(match.getMatchId());
                 Integer status = matchDetails.get("status").asInt();
 
-                matchService.uploadMatchDetails(matchId, matchDetails);
+                matchService.uploadMatchDetails(match.getMatchId(), matchDetails);
                 LOGGER.info(matchDetails.toString());
                 LOGGER.info("-------------------------------------");
 
-                if (matchDetails.get("status").asInt() == 1){
+                if (matchDetails.get("status").asInt() == 1 && LocalDateTime.now().isAfter(match.getStartDate().plusMinutes(230))){
                     endMatch();
                     this.cancel();
                 }
@@ -73,9 +72,9 @@ public class LiveMatchUpdater extends HystrixCommand<Void>{
 
     private void endMatch(){
 
-        this.publisher.publish(new Event(EventTypes.MATCH_ENDED, this.matchId));
+        this.publisher.publish(new Event(EventTypes.MATCH_ENDED, this.match.getMatchId()));
 
-        final Optional<Match> match = matchService.findMatchByMatchId(this.matchId);
+        final Optional<Match> match = matchService.findMatchByMatchId(this.match.getMatchId());
         match.ifPresent(m->{
             m.setMatchStatus(Match.MatchStatus.ENDED);
             matchService.updateMatch(m);

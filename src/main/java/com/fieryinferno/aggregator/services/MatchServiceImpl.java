@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,6 +37,11 @@ public class MatchServiceImpl implements MatchService {
     @Autowired
     private FirebaseGateway firebaseGateway;
 
+    @PostConstruct
+    public void init(){
+        getMatches();
+    }
+
     private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
@@ -46,7 +52,7 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public List<Match> getCurrentMatches() {
         List<Match> matches = matchRepository.findByMatchStatus(Match.MatchStatus.NOT_STARTED);
-        LocalDateTime now = LocalDateTime.now().plusMinutes(30);
+        LocalDateTime now = LocalDateTime.now().plusMinutes(60);
 
         return matches.stream().filter(match ->  {
             LOGGER.info("match startTime={}", match.getStartDate());
