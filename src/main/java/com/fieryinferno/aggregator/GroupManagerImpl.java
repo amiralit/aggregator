@@ -22,6 +22,11 @@ public class GroupManagerImpl implements GroupManager, Observer{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupManagerImpl.class);
 
+    @PostConstruct
+    public void init(){
+        updateGroupStandings();
+    }
+
     @Autowired
     private GroupGateway groupGateway;
 

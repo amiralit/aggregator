@@ -40,7 +40,7 @@ public class FirebaseGatewayImpl implements FirebaseGateway {
     public void putGroupStandings(String groupId, JsonNode groupStanding) {
         LOGGER.info("putGroupStandings={}", groupId);
 
-        final String url = MessageFormat.format("https://fiery-inferno-5799.firebaseio.com/tests/groups/{0}.json?auth={1}", groupId, getToken());
+        final String url = MessageFormat.format("https://fiery-inferno-5799.firebaseio.com/tests/Groups/{0}.json?auth={1}", groupId, getToken());
         restTemplate.put(url, groupStanding);
     }
 
