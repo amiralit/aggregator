@@ -52,7 +52,7 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public List<Match> getCurrentMatches() {
         List<Match> matches = matchRepository.findByMatchStatus(Match.MatchStatus.NOT_STARTED);
-        LocalDateTime now = LocalDateTime.now().plusMinutes(60);
+        LocalDateTime now = LocalDateTime.now(DateTimeZone.forID("America/Los_Angeles")).plusMinutes(60);
 
         return matches.stream().filter(match ->  {
             LOGGER.info("match startTime={}", match.getStartDate());
