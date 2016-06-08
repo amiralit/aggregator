@@ -23,7 +23,7 @@ public class GroupGatewayImpl implements GroupGateway{
     private RestTemplate restTemplate;
 
     @Override
-    public Optional<JsonNode> getGroupStandings(final String groupId) {
+    public synchronized Optional<JsonNode> getGroupStandings(final String groupId) {
 
         final String url = "http://www.resultados-futbol.com/scripts/api/api.php?key=40b2f1fd2a56cbd88df8b2c9b291760f&req=tables&format=json&lang=en&league=177&year=2016&group="+groupId;
 

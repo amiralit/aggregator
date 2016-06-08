@@ -25,7 +25,7 @@ public class MatchGatewayImpl implements MatchGateway{
     private RestTemplate restTemplate;
 
     @Override
-    public Optional<JsonNode> getMatches(int round) {
+    public synchronized Optional<JsonNode> getMatches(int round) {
         final String url = "http://www.resultados-futbol.com/scripts/api/api.php?key=40b2f1fd2a56cbd88df8b2c9b291760f&req=matchs&format=json&lang=en&league=177&round="+round;
         LOGGER.info("calling getMatches: {}", url);
         final String response = restTemplate.getForObject(url, String.class);
@@ -41,7 +41,7 @@ public class MatchGatewayImpl implements MatchGateway{
     }
 
     @Override
-    public Optional<JsonNode> getMatcheDetails(String matchId) {
+    public synchronized Optional<JsonNode> getMatcheDetails(String matchId) {
         Validate.notNull(matchId);
         final String url = "http://www.resultados-futbol.com/scripts/api/api.php?key=40b2f1fd2a56cbd88df8b2c9b291760f&req=match&format=json&tz=America/Portland&lang=en&year=2016&id=" + matchId;
 

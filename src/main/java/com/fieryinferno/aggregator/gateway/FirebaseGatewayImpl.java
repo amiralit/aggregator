@@ -28,7 +28,7 @@ public class FirebaseGatewayImpl implements FirebaseGateway {
     RestTemplate restTemplate;
 
     @Override
-    public void putMatchDetails(String matchId, JsonNode matchDetails) {
+    public synchronized void putMatchDetails(String matchId, JsonNode matchDetails) {
 
         LOGGER.info("putMatchDetails={}", matchId);
 
@@ -37,7 +37,7 @@ public class FirebaseGatewayImpl implements FirebaseGateway {
     }
 
     @Override
-    public void putGroupStandings(String groupId, JsonNode groupStanding) {
+    public synchronized void putGroupStandings(String groupId, JsonNode groupStanding) {
         LOGGER.info("putGroupStandings={}", groupId);
 
         final String url = MessageFormat.format("https://fiery-inferno-5799.firebaseio.com/Groups/{0}.json?auth={1}", groupId, getToken());
