@@ -6,16 +6,16 @@ import com.fieryinferno.aggregator.events.EventTypes;
 import com.fieryinferno.aggregator.events.Observer;
 import com.fieryinferno.aggregator.events.Publisher;
 import com.fieryinferno.aggregator.repositories.Match;
-import com.fieryinferno.aggregator.services.LiveMatchUpdater;
+import com.fieryinferno.aggregator.services.LiveMatchUpdaterRunnable;
 import com.fieryinferno.aggregator.services.MatchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by atahmasebi on 4/25/16.
@@ -30,6 +30,8 @@ public class MatchManagerImpl implements MatchManager, Observer{
     @Autowired
     private MatchService matchService;
 
+    private ExecutorService executorService = Executors.newFixedThreadPool(5);
+
     @Override
     public void run() {
         final List<Match> currentMatches = matchService.getCurrentMatches();
@@ -43,7 +45,8 @@ public class MatchManagerImpl implements MatchManager, Observer{
                 currentMatch.setMatchStatus(Match.MatchStatus.IN_PROGRESS);
                 matchService.updateMatch(currentMatch);
 
-                new LiveMatchUpdater(matchService, publisher, currentMatch, 60000).queue();
+                //new LiveMatchUpdater(matchService, publisher, currentMatch, 60000).queue();
+                executorService.submit(new LiveMatchUpdaterRunnable(matchService, publisher, currentMatch, 60000));
 
                 publisher.publish(new Event(EventTypes.MATCH_STARTED, currentMatch.getMatchId()));
             });
