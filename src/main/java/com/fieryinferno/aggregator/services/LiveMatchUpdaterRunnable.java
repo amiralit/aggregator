@@ -49,7 +49,7 @@ public class LiveMatchUpdaterRunnable implements Runnable {
                     LOGGER.info(matchDetails.toString());
                     LOGGER.info("-------------------------------------");
 
-                    if (matchDetails.get("status").asInt() == 1 ) {
+                    if ( false ) {
                         endMatch();
                         this.cancel();
                     }
